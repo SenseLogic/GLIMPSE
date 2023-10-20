@@ -1,0 +1,10 @@
+{
+    "id": "glimpse",
+    "name": "Glimpse",
+    "version": "1.0.0",
+    "minAppVersion": "1.0.9",
+    "description": "MP4/WEBM video preview.",
+    "author": "SenseLogic",
+    "authorUrl": "https://github.com/senselogic/",
+    "isDesktopOnly": false
+}
