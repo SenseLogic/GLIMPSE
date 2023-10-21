@@ -1,7 +1,7 @@
 {
     "id": "glimpse",
     "name": "Glimpse",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "minAppVersion": "1.0.9",
     "description": "MP4/WEBM video preview.",
     "author": "SenseLogic",
