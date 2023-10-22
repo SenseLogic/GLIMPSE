@@ -146,13 +146,18 @@ module.exports = class Glimpse extends Plugin
         this.registerMarkdownPostProcessor(
             ( element ) =>
             {
-                let documentPath = this.app.workspace.getActiveFile().path;
-                let basePath = documentPath.slice( 0, documentPath.lastIndexOf( '/' ) + 1 );
+                let activeFilePath = this.app.workspace.getActiveFile().path;
+                let activeFolderPath = '';
+
+                if ( activeFilePath.indexOf( '/' ) >= 0 )
+                {
+                    activeFolderPath = activeFilePath.slice( 0, activeFilePath.lastIndexOf( '/' ) + 1 );
+                }
 
                 element.querySelectorAll( 'a[ href$=".mp4" ], a[ href$=".webm" ]' ).forEach(
                     ( anchorElement ) =>
                     {
-                        let videoPath = basePath + anchorElement.getAttribute( 'href' );
+                        let videoPath = activeFolderPath + anchorElement.getAttribute( 'href' );
                         let videoElement = document.createElement( 'video' );
                         videoElement.src = this.app.vault.adapter.getResourcePath( videoPath );
                         videoElement.autoplay = false;
