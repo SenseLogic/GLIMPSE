@@ -141,6 +141,8 @@ module.exports = class Glimpse extends Plugin
     async onload(
         )
     {
+        console.log( 'Glimpse plugin loaded' );
+
         await this.loadSettings();
 
         this.registerMarkdownPostProcessor(
@@ -158,6 +160,7 @@ module.exports = class Glimpse extends Plugin
                     ( anchorElement ) =>
                     {
                         let videoPath = activeFolderPath + anchorElement.getAttribute( 'href' );
+
                         let videoElement = document.createElement( 'video' );
                         videoElement.src = this.app.vault.adapter.getResourcePath( videoPath );
                         videoElement.autoplay = false;
@@ -168,7 +171,8 @@ module.exports = class Glimpse extends Plugin
                         videoElement.style.maxHeight = this.settings.videoPlayerMaximumHeight;
                         videoElement.style.height = this.settings.videoPlayerHeight;
                         videoElement.style.width = this.settings.videoPlayerWidth;
-                        anchorElement.insertAdjacentElement( 'afterend', videoElement );
+
+                        anchorElement.parentNode.replaceChild( videoElement, anchorElement );
                     }
                     );
             }
@@ -184,5 +188,6 @@ module.exports = class Glimpse extends Plugin
     onunload(
         )
     {
+        console.log( 'Glimpse plugin unloaded' );
     }
 };

@@ -12,7 +12,7 @@ In reading mode, a small video player is now added after each anchor tag referen
 
 *   In your vault folder, create a `.obsidian/plugins/glimpse` subfolder.
 *   Copy `main.js`, `manifest.json` and `styles.css` inside this subfolder.
-*   Add "glimpse" to `.obsidian/community-plugins.json`.
+*   Enable the Glimpse plugin from the `Community plugins` settings panel.
 
 ## Version
 
