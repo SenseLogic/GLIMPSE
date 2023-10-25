@@ -133,7 +133,7 @@ module.exports = class Glimpse extends Plugin
     async saveSettings(
         )
     {
-        await this.saveData(this.settings);
+        await this.saveData( this.settings );
     }
 
     // ~~
