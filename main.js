@@ -41,7 +41,8 @@ class GlimpseSettingTab
                             this.plugin.settings.videoPlayerTopMargin = value;
                             await this.plugin.saveSettings();
                         }
-                ) );
+                        )
+                );
 
         new Setting( containerEl )
             .setName( 'Video player bottom margin' )
@@ -56,7 +57,8 @@ class GlimpseSettingTab
                             this.plugin.settings.videoPlayerBottomMargin = value;
                             await this.plugin.saveSettings();
                         }
-                ) );
+                        )
+                );
 
         new Setting( containerEl )
             .setName( 'Video player maximum height' )
@@ -71,7 +73,8 @@ class GlimpseSettingTab
                             this.plugin.settings.videoPlayerMaximumHeight = value;
                             await this.plugin.saveSettings();
                         }
-                ) );
+                        )
+                );
 
         new Setting( containerEl )
             .setName( 'Video player height' )
@@ -86,7 +89,8 @@ class GlimpseSettingTab
                             this.plugin.settings.videoPlayerHeight = value;
                             await this.plugin.saveSettings();
                         }
-                ) );
+                        )
+                );
 
         new Setting( containerEl )
             .setName( 'Video player width' )
@@ -101,7 +105,8 @@ class GlimpseSettingTab
                             this.plugin.settings.videoPlayerWidth = value;
                             await this.plugin.saveSettings();
                         }
-                ) );
+                        )
+                );
     }
 }
 
