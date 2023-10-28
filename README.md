@@ -2,7 +2,7 @@
 
 # Glimpse
 
-MP4/WEBM video preview plugin for Obsidian.
+Customizable MP4/WEBM video player plugin for Obsidian.
 
 ## Description
 
