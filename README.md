@@ -6,7 +6,7 @@ MP4/WEBM video preview plugin for Obsidian.
 
 ## Description
 
-In reading mode, ".mp4" and ".webm" local links are replaced by a video player.
+In reading mode, this plugin replaces links to local ".mp4" and ".webm" files by a customizable video player.
 
 ## Installation
 
