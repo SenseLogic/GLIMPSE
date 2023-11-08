@@ -14,6 +14,12 @@ In reading mode, this plugin replaces links to local ".mp4" and ".webm" files by
 *   Copy `main.js`, `manifest.json` and `styles.css` inside this subfolder.
 *   Enable the Glimpse plugin from the `Community plugins` settings panel.
 
+## Limitations
+
+*   The custom video links must have this syntax :
+    *   [the video title](path/to/file.mp4)
+    *   [the video title](path/to/file.webm)
+
 ## Version
 
 1.0
