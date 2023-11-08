@@ -16,7 +16,7 @@ In reading mode, this plugin replaces links to local ".mp4" and ".webm" files by
 
 ## Limitations
 
-*   The custom video links must have this syntax :
+*   The customized video links must have this syntax :
     *   `[the video title](path/to/file.mp4)`
     *   `[the video title](path/to/file.webm)`
 
