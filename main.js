@@ -238,6 +238,8 @@ module.exports = class Glimpse extends Plugin
         this.registerMarkdownPostProcessor(
             ( element ) =>
             {
+console.log( element.innerHTML );
+console.log( element );
                 let activeFilePath = this.app.workspace.getActiveFile().path;
                 let activeFolderPath = '';
 
@@ -263,8 +265,8 @@ module.exports = class Glimpse extends Plugin
                         imageElement.style.marginTop = this.settings.imageTopMargin;
                         imageElement.style.marginBottom = this.settings.imageBottomMargin;
                         imageElement.style.maxHeight = this.settings.imageMaximumHeight;
-                        imageElement.style.width = this.settings.imageWidth;
                         imageElement.style.height = this.settings.imageHeight;
+                        imageElement.style.width = this.settings.imageWidth;
                         imageElement.style.objectFit = 'contain';
                         imageElement.style.objectPosition = 'left';
 
