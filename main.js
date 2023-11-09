@@ -29,80 +29,160 @@ class GlimpseSettingTab
         containerEl.empty();
 
         new Setting( containerEl )
-            .setName( 'Video player top margin' )
+            .setName( 'Image top margin' )
             .addText(
                 text =>
                 text
                     .setPlaceholder( '16px' )
-                    .setValue( this.plugin.settings.videoPlayerTopMargin )
+                    .setValue( this.plugin.settings.imageTopMargin )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoPlayerTopMargin = value;
+                            this.plugin.settings.imageTopMargin = value;
                             await this.plugin.saveSettings();
                         }
                         )
                 );
 
         new Setting( containerEl )
-            .setName( 'Video player bottom margin' )
+            .setName( 'Image bottom margin' )
             .addText(
                 text =>
                 text
                     .setPlaceholder( '0px' )
-                    .setValue( this.plugin.settings.videoPlayerBottomMargin )
+                    .setValue( this.plugin.settings.imageBottomMargin )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoPlayerBottomMargin = value;
+                            this.plugin.settings.imageBottomMargin = value;
                             await this.plugin.saveSettings();
                         }
                         )
                 );
 
         new Setting( containerEl )
-            .setName( 'Video player maximum height' )
+            .setName( 'Image maximum height' )
             .addText(
                 text =>
                 text
                     .setPlaceholder( '80vh' )
-                    .setValue( this.plugin.settings.videoPlayerMaximumHeight )
+                    .setValue( this.plugin.settings.imageMaximumHeight )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoPlayerMaximumHeight = value;
+                            this.plugin.settings.imageMaximumHeight = value;
                             await this.plugin.saveSettings();
                         }
                         )
                 );
 
         new Setting( containerEl )
-            .setName( 'Video player height' )
+            .setName( 'Image height' )
             .addText(
                 text =>
                 text
                     .setPlaceholder( 'auto' )
-                    .setValue( this.plugin.settings.videoPlayerHeight )
+                    .setValue( this.plugin.settings.imageHeight )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoPlayerHeight = value;
+                            this.plugin.settings.imageHeight = value;
                             await this.plugin.saveSettings();
                         }
                         )
                 );
 
         new Setting( containerEl )
-            .setName( 'Video player width' )
+            .setName( 'Image width' )
             .addText(
                 text =>
                 text
                     .setPlaceholder( '100%' )
-                    .setValue( this.plugin.settings.videoPlayerWidth )
+                    .setValue( this.plugin.settings.imageWidth )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoPlayerWidth = value;
+                            this.plugin.settings.imageWidth = value;
+                            await this.plugin.saveSettings();
+                        }
+                        )
+                );
+
+        new Setting( containerEl )
+            .setName( 'Video top margin' )
+            .addText(
+                text =>
+                text
+                    .setPlaceholder( '16px' )
+                    .setValue( this.plugin.settings.videoTopMargin )
+                    .onChange(
+                        async ( value ) =>
+                        {
+                            this.plugin.settings.videoTopMargin = value;
+                            await this.plugin.saveSettings();
+                        }
+                        )
+                );
+
+        new Setting( containerEl )
+            .setName( 'Video bottom margin' )
+            .addText(
+                text =>
+                text
+                    .setPlaceholder( '0px' )
+                    .setValue( this.plugin.settings.videoBottomMargin )
+                    .onChange(
+                        async ( value ) =>
+                        {
+                            this.plugin.settings.videoBottomMargin = value;
+                            await this.plugin.saveSettings();
+                        }
+                        )
+                );
+
+        new Setting( containerEl )
+            .setName( 'Video maximum height' )
+            .addText(
+                text =>
+                text
+                    .setPlaceholder( '80vh' )
+                    .setValue( this.plugin.settings.videoMaximumHeight )
+                    .onChange(
+                        async ( value ) =>
+                        {
+                            this.plugin.settings.videoMaximumHeight = value;
+                            await this.plugin.saveSettings();
+                        }
+                        )
+                );
+
+        new Setting( containerEl )
+            .setName( 'Video height' )
+            .addText(
+                text =>
+                text
+                    .setPlaceholder( 'auto' )
+                    .setValue( this.plugin.settings.videoHeight )
+                    .onChange(
+                        async ( value ) =>
+                        {
+                            this.plugin.settings.videoHeight = value;
+                            await this.plugin.saveSettings();
+                        }
+                        )
+                );
+
+        new Setting( containerEl )
+            .setName( 'Video width' )
+            .addText(
+                text =>
+                text
+                    .setPlaceholder( '100%' )
+                    .setValue( this.plugin.settings.videoWidth )
+                    .onChange(
+                        async ( value ) =>
+                        {
+                            this.plugin.settings.videoWidth = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -123,11 +203,16 @@ module.exports = class Glimpse extends Plugin
             = Object.assign(
                   {},
                   {
-                      videoPlayerTopMargin: '16px',
-                      videoPlayerBottomMargin: '0px',
-                      videoPlayerMaximumHeight: '80vh',
-                      videoPlayerHeight: 'auto',
-                      videoPlayerWidth: '100%'
+                      imageTopMargin: '16px',
+                      imageBottomMargin: '0px',
+                      imageMaximumHeight: '80vh',
+                      imageHeight: 'auto',
+                      imageWidth: '100%',
+                      videoTopMargin: '16px',
+                      videoBottomMargin: '0px',
+                      videoMaximumHeight: '80vh',
+                      videoHeight: 'auto',
+                      videoWidth: '100%'
                   },
                   await this.loadData()
                   );
@@ -161,29 +246,29 @@ module.exports = class Glimpse extends Plugin
                     activeFolderPath = activeFilePath.slice( 0, activeFilePath.lastIndexOf( '/' ) + 1 );
                 }
 
-                element.querySelectorAll( 'a[href$=".mp4"], a[href$=".webm"]' ).forEach(
+                element.querySelectorAll( 'div.internal-embed[src$=".gif"], div.internal-embed[src$=".jpg"], div.internal-embed[src$=".png"], div.internal-embed[src$=".webp"], span.internal-embed[src$=".gif"], span.internal-embed[src$=".jpg"], span.internal-embed[src$=".png"], span.internal-embed[src$=".webp"]' ).forEach(
                     ( linkElement ) =>
                     {
-                        let videoPath = linkElement.getAttribute( 'href' );
+                        let imagePath = linkElement.getAttribute( 'src' );
 
-                        if ( !videoPath.startsWith( 'http:' )
-                             && !videoPath.startsWith( 'https:' ) )
+                        if ( !imagePath.startsWith( 'http:' )
+                             && !imagePath.startsWith( 'https:' ) )
                         {
-                            videoPath = this.app.vault.adapter.getResourcePath( activeFolderPath + videoPath );
+                            imagePath = this.app.vault.adapter.getResourcePath( activeFolderPath + imagePath );
                         }
 
-                        let videoElement = document.createElement( 'video' );
-                        videoElement.src = videoPath;
-                        videoElement.autoplay = false;
-                        videoElement.loop = false;
-                        videoElement.controls = true;
-                        videoElement.style.marginTop = this.settings.videoPlayerTopMargin;
-                        videoElement.style.marginBottom = this.settings.videoPlayerBottomMargin;
-                        videoElement.style.maxHeight = this.settings.videoPlayerMaximumHeight;
-                        videoElement.style.height = this.settings.videoPlayerHeight;
-                        videoElement.style.width = this.settings.videoPlayerWidth;
+                        let imageElement = document.createElement( 'img' );
+                        imageElement.src = imagePath;
+                        imageElement.alt = linkElement.getAttribute( 'alt' );
+                        imageElement.style.marginTop = this.settings.imageTopMargin;
+                        imageElement.style.marginBottom = this.settings.imageBottomMargin;
+                        imageElement.style.maxHeight = this.settings.imageMaximumHeight;
+                        imageElement.style.width = this.settings.imageWidth;
+                        imageElement.style.height = this.settings.imageHeight;
+                        imageElement.style.objectFit = 'contain';
+                        imageElement.style.objectPosition = 'left';
 
-                        linkElement.parentNode.replaceChild( videoElement, linkElement );
+                        linkElement.parentNode.replaceChild( imageElement, linkElement );
                     }
                     );
 
@@ -203,11 +288,39 @@ module.exports = class Glimpse extends Plugin
                         videoElement.autoplay = false;
                         videoElement.loop = false;
                         videoElement.controls = true;
-                        videoElement.style.marginTop = this.settings.videoPlayerTopMargin;
-                        videoElement.style.marginBottom = this.settings.videoPlayerBottomMargin;
-                        videoElement.style.maxHeight = this.settings.videoPlayerMaximumHeight;
-                        videoElement.style.height = this.settings.videoPlayerHeight;
-                        videoElement.style.width = this.settings.videoPlayerWidth;
+                        videoElement.title = linkElement.getAttribute( 'alt' );
+                        videoElement.style.marginTop = this.settings.videoTopMargin;
+                        videoElement.style.marginBottom = this.settings.videoBottomMargin;
+                        videoElement.style.maxHeight = this.settings.videoMaximumHeight;
+                        videoElement.style.height = this.settings.videoHeight;
+                        videoElement.style.width = this.settings.videoWidth;
+
+                        linkElement.parentNode.replaceChild( videoElement, linkElement );
+                    }
+                    );
+
+                element.querySelectorAll( 'a[href$=".mp4"], a[href$=".webm"]' ).forEach(
+                    ( linkElement ) =>
+                    {
+                        let videoPath = linkElement.getAttribute( 'href' );
+
+                        if ( !videoPath.startsWith( 'http:' )
+                             && !videoPath.startsWith( 'https:' ) )
+                        {
+                            videoPath = this.app.vault.adapter.getResourcePath( activeFolderPath + videoPath );
+                        }
+
+                        let videoElement = document.createElement( 'video' );
+                        videoElement.src = videoPath;
+                        videoElement.autoplay = false;
+                        videoElement.loop = false;
+                        videoElement.controls = true;
+                        videoElement.title = linkElement.textContent;
+                        videoElement.style.marginTop = this.settings.videoTopMargin;
+                        videoElement.style.marginBottom = this.settings.videoBottomMargin;
+                        videoElement.style.maxHeight = this.settings.videoMaximumHeight;
+                        videoElement.style.height = this.settings.videoHeight;
+                        videoElement.style.width = this.settings.videoWidth;
 
                         linkElement.parentNode.replaceChild( videoElement, linkElement );
                     }

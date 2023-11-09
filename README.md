@@ -2,33 +2,32 @@
 
 # Glimpse
 
-Customizable MP4/WEBM video player plugin for Obsidian.
+Customizable image and video rendering for Obsidian.
 
 ## Description
 
-In reading mode, this plugin replaces MP4 and WEBM links by a customizable video player.
+This plugin renders image and video links with a customizable height.
 
-## Limitations
+The following link formats are supported :
+*   `[title](path/to/file.ext)`
+*   `[title](http://path/to/file.ext)`
+*   `[title](https://path/to/file.ext)`
+*   `![title](path/to/file.ext)`
+*   `![title](http://path/to/file.ext)`
+*   `![title](https://path/to/file.ext)`
+*   `![[path/to/file.ext]]`
+*   `![[http://path/to/file.ext]]`
+*   `![[https://path/to/file.ext]]`
 
-Only the following video link formats are supported :
-*   `[title](path/to/video.mp4)`
-*   `[title](path/to/video.webm)`
-*   `[title](http://path/to/video.mp4)`
-*   `[title](http://path/to/video.webm)`
-*   `[title](https://path/to/video.mp4)`
-*   `[title](https://path/to/video.webm)`
-*   `![title](path/to/video.mp4)`
-*   `![title](path/to/video.webm)`
-*   `![title](http://path/to/video.mp4)`
-*   `![title](http://path/to/video.webm)`
-*   `![title](https://path/to/video.mp4)`
-*   `![title](https://path/to/video.webm)`
-*   `![[path/to/video.mp4]]`
-*   `![[path/to/video.webm]]`
-*   `![[http://path/to/video.mp4]]`
-*   `![[http://path/to/video.webm]]`
-*   `![[https://path/to/video.mp4]]`
-*   `![[https://path/to/video.webm]]`
+The following image file extensions are supported :
+*   .gif
+*   .jpg
+*   .png
+*   .webp
+
+The following video file extensions are supported :
+*   .mp4
+*   .webm
 
 ## Installation
 
