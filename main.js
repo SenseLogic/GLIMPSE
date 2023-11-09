@@ -161,13 +161,19 @@ module.exports = class Glimpse extends Plugin
                     activeFolderPath = activeFilePath.slice( 0, activeFilePath.lastIndexOf( '/' ) + 1 );
                 }
 
-                element.querySelectorAll( 'a[ href$=".mp4" ], a[ href$=".webm" ]' ).forEach(
-                    ( anchorElement ) =>
+                element.querySelectorAll( 'a[href$=".mp4"], a[href$=".webm"]' ).forEach(
+                    ( linkElement ) =>
                     {
-                        let videoPath = activeFolderPath + anchorElement.getAttribute( 'href' );
+                        let videoPath = linkElement.getAttribute( 'href' );
+
+                        if ( !videoPath.startsWith( 'http:' )
+                             && !videoPath.startsWith( 'https:' ) )
+                        {
+                            videoPath = this.app.vault.adapter.getResourcePath( activeFolderPath + videoPath );
+                        }
 
                         let videoElement = document.createElement( 'video' );
-                        videoElement.src = this.app.vault.adapter.getResourcePath( videoPath );
+                        videoElement.src = videoPath;
                         videoElement.autoplay = false;
                         videoElement.loop = false;
                         videoElement.controls = true;
@@ -177,7 +183,33 @@ module.exports = class Glimpse extends Plugin
                         videoElement.style.height = this.settings.videoPlayerHeight;
                         videoElement.style.width = this.settings.videoPlayerWidth;
 
-                        anchorElement.parentNode.replaceChild( videoElement, anchorElement );
+                        linkElement.parentNode.replaceChild( videoElement, linkElement );
+                    }
+                    );
+
+                element.querySelectorAll( 'div.internal-embed[src$=".mp4"], div.internal-embed[src$=".webm"], span.internal-embed[src$=".mp4"], span.internal-embed[src$=".webm"]' ).forEach(
+                    ( linkElement ) =>
+                    {
+                        let videoPath = linkElement.getAttribute( 'src' );
+
+                        if ( !videoPath.startsWith( 'http:' )
+                             && !videoPath.startsWith( 'https:' ) )
+                        {
+                            videoPath = this.app.vault.adapter.getResourcePath( activeFolderPath + videoPath );
+                        }
+
+                        let videoElement = document.createElement( 'video' );
+                        videoElement.src = videoPath;
+                        videoElement.autoplay = false;
+                        videoElement.loop = false;
+                        videoElement.controls = true;
+                        videoElement.style.marginTop = this.settings.videoPlayerTopMargin;
+                        videoElement.style.marginBottom = this.settings.videoPlayerBottomMargin;
+                        videoElement.style.maxHeight = this.settings.videoPlayerMaximumHeight;
+                        videoElement.style.height = this.settings.videoPlayerHeight;
+                        videoElement.style.width = this.settings.videoPlayerWidth;
+
+                        linkElement.parentNode.replaceChild( videoElement, linkElement );
                     }
                     );
             }
