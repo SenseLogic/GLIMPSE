@@ -9,15 +9,21 @@ Customizable image and video rendering for Obsidian.
 This plugin renders image and video links with a customizable maximum height.
 
 The following link formats are supported :
-*   `[title](path/to/file.ext)`
-*   `[title](http://path/to/file.ext)`
-*   `[title](https://path/to/file.ext)`
-*   `![title](path/to/file.ext)`
-*   `![title](http://path/to/file.ext)`
-*   `![title](https://path/to/file.ext)`
-*   `![[path/to/file.ext]]`
-*   `![[http://path/to/file.ext]]`
-*   `![[https://path/to/file.ext]]`
+*   `[title](path/to/video.ext)`
+*   `[title](http://path/to/video.ext)`
+*   `[title](https://path/to/video.ext)`
+*   `![title](path/to/image.ext)`
+*   `![title](http://path/to/image.ext)`
+*   `![title](https://path/to/image.ext)`
+*   `![title](path/to/video.ext)`
+*   `![title](http://path/to/video.ext)`
+*   `![title](https://path/to/video.ext)`
+*   `![[path/to/image.ext]]`
+*   `![[http://path/to/image.ext]]`
+*   `![[https://path/to/image.ext]]`
+*   `![[path/to/video.ext]]`
+*   `![[http://path/to/video.ext]]`
+*   `![[https://path/to/video.ext]]`
 
 The following file extensions are supported :
 *   .gif
