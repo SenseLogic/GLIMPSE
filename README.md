@@ -19,13 +19,11 @@ The following link formats are supported :
 *   `![[http://path/to/file.ext]]`
 *   `![[https://path/to/file.ext]]`
 
-The following image file extensions are supported :
+The following file extensions are supported :
 *   .gif
 *   .jpg
 *   .png
 *   .webp
-
-The following video file extensions are supported :
 *   .mp4
 *   .webm
 
