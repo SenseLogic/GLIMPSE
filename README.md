@@ -6,7 +6,7 @@ Customizable image and video rendering for Obsidian.
 
 ## Description
 
-This plugin renders image and video links with a customizable height.
+This plugin renders image and video links with a customizable maximum height.
 
 The following link formats are supported :
 *   `[title](path/to/file.ext)`
