@@ -18,12 +18,12 @@ The following link formats are supported :
 *   `![title](path/to/video.ext)`
 *   `![title](http://path/to/video.ext)`
 *   `![title](https://path/to/video.ext)`
-*   `![[path/to/image.ext]]`
-*   `![[http://path/to/image.ext]]`
-*   `![[https://path/to/image.ext]]`
-*   `![[path/to/video.ext]]`
-*   `![[http://path/to/video.ext]]`
-*   `![[https://path/to/video.ext]]`
+*   `![[path/to/image.ext|title]]`
+*   `![[http://path/to/image.ext|title]]`
+*   `![[https://path/to/image.ext|title]]`
+*   `![[path/to/video.ext|title]]`
+*   `![[http://path/to/video.ext|title]]`
+*   `![[https://path/to/video.ext|title]]`
 
 The following file extensions are supported :
 *   .gif
@@ -32,6 +32,15 @@ The following file extensions are supported :
 *   .webp
 *   .mp4
 *   .webm
+
+The title can be used to specify the medium width and/or height :
+
+*   `![title¨50%](path/to/image.ext)`
+*   `![title¨:10rem](http://path/to/image.ext)`
+*   `![title¨auto:10rem](https://path/to/image.ext)`
+*   `![[path/to/video.ext|title¨50%]]`
+*   `![[http://path/to/video.ext|title¨:10rem]]`
+*   `![[https://path/to/video.ext|title¨auto:10rem]]`
 
 ## Installation
 

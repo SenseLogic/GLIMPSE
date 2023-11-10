@@ -29,48 +29,16 @@ class GlimpseSettingTab
         containerEl.empty();
 
         new Setting( containerEl )
-            .setName( 'Image top margin' )
+            .setName( 'Image width' )
             .addText(
                 text =>
                 text
-                    .setPlaceholder( '16px' )
-                    .setValue( this.plugin.settings.imageTopMargin )
+                    .setPlaceholder( '100%' )
+                    .setValue( this.plugin.settings.imageWidth )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.imageTopMargin = value;
-                            await this.plugin.saveSettings();
-                        }
-                        )
-                );
-
-        new Setting( containerEl )
-            .setName( 'Image bottom margin' )
-            .addText(
-                text =>
-                text
-                    .setPlaceholder( '0px' )
-                    .setValue( this.plugin.settings.imageBottomMargin )
-                    .onChange(
-                        async ( value ) =>
-                        {
-                            this.plugin.settings.imageBottomMargin = value;
-                            await this.plugin.saveSettings();
-                        }
-                        )
-                );
-
-        new Setting( containerEl )
-            .setName( 'Image maximum height' )
-            .addText(
-                text =>
-                text
-                    .setPlaceholder( '80vh' )
-                    .setValue( this.plugin.settings.imageMaximumHeight )
-                    .onChange(
-                        async ( value ) =>
-                        {
-                            this.plugin.settings.imageMaximumHeight = value;
+                            this.plugin.settings.imageWidth = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -93,64 +61,48 @@ class GlimpseSettingTab
                 );
 
         new Setting( containerEl )
-            .setName( 'Image width' )
+            .setName( 'Image maximum width' )
             .addText(
                 text =>
                 text
                     .setPlaceholder( '100%' )
-                    .setValue( this.plugin.settings.imageWidth )
+                    .setValue( this.plugin.settings.imageMaximumWidth )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.imageWidth = value;
+                            this.plugin.settings.imageMaximumWidth = value;
                             await this.plugin.saveSettings();
                         }
                         )
                 );
 
         new Setting( containerEl )
-            .setName( 'Video top margin' )
-            .addText(
-                text =>
-                text
-                    .setPlaceholder( '16px' )
-                    .setValue( this.plugin.settings.videoTopMargin )
-                    .onChange(
-                        async ( value ) =>
-                        {
-                            this.plugin.settings.videoTopMargin = value;
-                            await this.plugin.saveSettings();
-                        }
-                        )
-                );
-
-        new Setting( containerEl )
-            .setName( 'Video bottom margin' )
-            .addText(
-                text =>
-                text
-                    .setPlaceholder( '0px' )
-                    .setValue( this.plugin.settings.videoBottomMargin )
-                    .onChange(
-                        async ( value ) =>
-                        {
-                            this.plugin.settings.videoBottomMargin = value;
-                            await this.plugin.saveSettings();
-                        }
-                        )
-                );
-
-        new Setting( containerEl )
-            .setName( 'Video maximum height' )
+            .setName( 'Image maximum height' )
             .addText(
                 text =>
                 text
                     .setPlaceholder( '80vh' )
-                    .setValue( this.plugin.settings.videoMaximumHeight )
+                    .setValue( this.plugin.settings.imageMaximumHeight )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoMaximumHeight = value;
+                            this.plugin.settings.imageMaximumHeight = value;
+                            await this.plugin.saveSettings();
+                        }
+                        )
+                );
+
+        new Setting( containerEl )
+            .setName( 'Video width' )
+            .addText(
+                text =>
+                text
+                    .setPlaceholder( '100%' )
+                    .setValue( this.plugin.settings.videoWidth )
+                    .onChange(
+                        async ( value ) =>
+                        {
+                            this.plugin.settings.videoWidth = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -173,16 +125,32 @@ class GlimpseSettingTab
                 );
 
         new Setting( containerEl )
-            .setName( 'Video width' )
+            .setName( 'Video maximum width' )
             .addText(
                 text =>
                 text
                     .setPlaceholder( '100%' )
-                    .setValue( this.plugin.settings.videoWidth )
+                    .setValue( this.plugin.settings.videoMaximumWidth )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoWidth = value;
+                            this.plugin.settings.videoMaximumWidth = value;
+                            await this.plugin.saveSettings();
+                        }
+                        )
+                );
+
+        new Setting( containerEl )
+            .setName( 'Video maximum height' )
+            .addText(
+                text =>
+                text
+                    .setPlaceholder( '80vh' )
+                    .setValue( this.plugin.settings.videoMaximumHeight )
+                    .onChange(
+                        async ( value ) =>
+                        {
+                            this.plugin.settings.videoMaximumHeight = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -203,16 +171,14 @@ module.exports = class Glimpse extends Plugin
             = Object.assign(
                   {},
                   {
-                      imageTopMargin: '16px',
-                      imageBottomMargin: '0px',
-                      imageMaximumHeight: '80vh',
-                      imageHeight: 'auto',
                       imageWidth: '100%',
-                      videoTopMargin: '16px',
-                      videoBottomMargin: '0px',
-                      videoMaximumHeight: '80vh',
+                      imageHeight: 'auto',
+                      imageMaximumWidth: '100%',
+                      imageMaximumHeight: '80vh',
+                      videoWidth: '100%',
                       videoHeight: 'auto',
-                      videoWidth: '100%'
+                      videoMaximumWidth: '100%',
+                      videoMaximumHeight: '80vh'
                   },
                   await this.loadData()
                   );
@@ -228,6 +194,39 @@ module.exports = class Glimpse extends Plugin
 
     // ~~
 
+    getLinkDataArray(
+        linkText
+        )
+    {
+        let linkDataArray = [ '', '100%', 'auto' ];
+        let partArray = linkText.split( '¨' );
+        linkDataArray[ 0 ] = partArray[ 0 ];
+
+        if ( partArray.length > 1 )
+        {
+            partArray = partArray[ 1 ].split( ':' );
+
+            if ( partArray.length >= 1 )
+            {
+                linkDataArray[ 1 ] = partArray[ 0 ];
+            }
+
+            if ( partArray.length >= 2 )
+            {
+                linkDataArray[ 2 ] = partArray[ 1 ];
+            }
+        }
+
+        if ( linkDataArray[ 1 ] === '' )
+        {
+            linkDataArray[ 1 ] = 'auto';
+        }
+
+        return linkDataArray;
+    }
+
+    // ~~
+
     async onload(
         )
     {
@@ -235,11 +234,14 @@ module.exports = class Glimpse extends Plugin
 
         await this.loadSettings();
 
+        let imageMaximumWidth = 'min(' + this.settings.imageWidth + ', ' + this.settings.imageMaximumWidth + ')';
+        let imageMaximumHeight = this.settings.imageMaximumHeight;
+        let videoMaximumWidth = 'min(' + this.settings.videoWidth + ', ' + this.settings.videoMaximumWidth + ')';
+        let videoMaximumHeight = this.settings.videoMaximumHeight;
+
         this.registerMarkdownPostProcessor(
             ( element ) =>
             {
-console.log( element.innerHTML );
-console.log( element );
                 let activeFilePath = this.app.workspace.getActiveFile().path;
                 let activeFolderPath = '';
 
@@ -248,83 +250,94 @@ console.log( element );
                     activeFolderPath = activeFilePath.slice( 0, activeFilePath.lastIndexOf( '/' ) + 1 );
                 }
 
-                element.querySelectorAll( 'div.internal-embed[src$=".gif"], div.internal-embed[src$=".jpg"], div.internal-embed[src$=".png"], div.internal-embed[src$=".webp"], span.internal-embed[src$=".gif"], span.internal-embed[src$=".jpg"], span.internal-embed[src$=".png"], span.internal-embed[src$=".webp"]' ).forEach(
+                element.querySelectorAll( 'div.internal-embed, span.internal-embed' ).forEach(
                     ( linkElement ) =>
                     {
-                        let imagePath = linkElement.getAttribute( 'src' );
+                        let linkPath = linkElement.getAttribute( 'src' );
 
-                        if ( !imagePath.startsWith( 'http:' )
-                             && !imagePath.startsWith( 'https:' ) )
+                        if ( linkPath.endsWith( '.gif' )
+                             || linkPath.endsWith( '.jpg' )
+                             || linkPath.endsWith( '.png' )
+                             || linkPath.endsWith( '.webp' ) )
                         {
-                            imagePath = this.app.vault.adapter.getResourcePath( activeFolderPath + imagePath );
+                            if ( !linkPath.startsWith( 'http:' )
+                                 && !linkPath.startsWith( 'https:' ) )
+                            {
+                                linkPath = this.app.vault.adapter.getResourcePath( activeFolderPath + linkPath );
+                            }
+
+                            let [ imageTitle, imageWidth, imageHeight ] = this.getLinkDataArray( linkElement.getAttribute( 'alt' ) );
+
+                            let imageElement = document.createElement( 'img' );
+                            imageElement.src = linkPath;
+                            imageElement.alt = imageTitle;
+                            imageElement.style.width = imageWidth;
+                            imageElement.style.height = imageHeight;
+                            imageElement.style.maxWidth = imageMaximumWidth;
+                            imageElement.style.maxHeight = imageMaximumHeight;
+                            imageElement.style.objectFit = 'contain';
+
+                            linkElement.parentNode.replaceChild( imageElement, linkElement );
                         }
 
-                        let imageElement = document.createElement( 'img' );
-                        imageElement.src = imagePath;
-                        imageElement.alt = linkElement.getAttribute( 'alt' );
-                        imageElement.style.marginTop = this.settings.imageTopMargin;
-                        imageElement.style.marginBottom = this.settings.imageBottomMargin;
-                        imageElement.style.maxHeight = this.settings.imageMaximumHeight;
-                        imageElement.style.height = this.settings.imageHeight;
-                        imageElement.style.width = this.settings.imageWidth;
-                        imageElement.style.objectFit = 'contain';
-                        imageElement.style.objectPosition = 'left';
+                        if ( linkPath.endsWith( '.mp4' )
+                             || linkPath.endsWith( '.webm' ) )
+                        {
+                            if ( !linkPath.startsWith( 'http:' )
+                                 && !linkPath.startsWith( 'https:' ) )
+                            {
+                                linkPath = this.app.vault.adapter.getResourcePath( activeFolderPath + linkPath );
+                            }
 
-                        linkElement.parentNode.replaceChild( imageElement, linkElement );
+                            let [ videoTitle, videoWidth, videoHeight ] = this.getLinkDataArray( linkElement.getAttribute( 'alt' ) );
+
+                            let videoElement = document.createElement( 'video' );
+                            videoElement.src = linkPath;
+                            videoElement.autoplay = false;
+                            videoElement.loop = false;
+                            videoElement.controls = true;
+                            videoElement.title = videoTitle;
+                            videoElement.style.width = videoWidth;
+                            videoElement.style.height = videoHeight;
+                            videoElement.style.maxWidth = videoMaximumWidth;
+                            videoElement.style.maxHeight = videoMaximumHeight;
+                            videoElement.style.objectFit = 'contain';
+
+                            linkElement.parentNode.replaceChild( videoElement, linkElement );
+                        }
                     }
                     );
 
-                element.querySelectorAll( 'div.internal-embed[src$=".mp4"], div.internal-embed[src$=".webm"], span.internal-embed[src$=".mp4"], span.internal-embed[src$=".webm"]' ).forEach(
+                element.querySelectorAll( 'a' ).forEach(
                     ( linkElement ) =>
                     {
-                        let videoPath = linkElement.getAttribute( 'src' );
+                        let linkPath = linkElement.getAttribute( 'href' );
 
-                        if ( !videoPath.startsWith( 'http:' )
-                             && !videoPath.startsWith( 'https:' ) )
+                        if ( linkPath.endsWith( '.mp4' )
+                             || linkPath.endsWith( '.webm' ) )
                         {
-                            videoPath = this.app.vault.adapter.getResourcePath( activeFolderPath + videoPath );
+                            if ( !linkPath.startsWith( 'http:' )
+                                 && !linkPath.startsWith( 'https:' ) )
+                            {
+                                linkPath = this.app.vault.adapter.getResourcePath( activeFolderPath + linkPath );
+                            }
+
+                            let [ videoTitle, videoWidth, videoHeight ] = this.getLinkDataArray( linkElement.textContent );
+
+                            let videoElement = document.createElement( 'video' );
+                            videoElement.src = linkPath;
+                            videoElement.autoplay = false;
+                            videoElement.loop = false;
+                            videoElement.controls = true;
+                            videoElement.title = videoTitle;
+                            videoElement.style.width = videoWidth;
+                            videoElement.style.height = videoHeight;
+                            videoElement.style.maxWidth = videoMaximumWidth;
+                            videoElement.style.maxHeight = videoMaximumHeight;
+                            videoElement.style.objectFit = 'contain';
+
+                            linkElement.parentNode.replaceChild( videoElement, linkElement );
                         }
-
-                        let videoElement = document.createElement( 'video' );
-                        videoElement.src = videoPath;
-                        videoElement.autoplay = false;
-                        videoElement.loop = false;
-                        videoElement.controls = true;
-                        videoElement.title = linkElement.getAttribute( 'alt' );
-                        videoElement.style.marginTop = this.settings.videoTopMargin;
-                        videoElement.style.marginBottom = this.settings.videoBottomMargin;
-                        videoElement.style.maxHeight = this.settings.videoMaximumHeight;
-                        videoElement.style.height = this.settings.videoHeight;
-                        videoElement.style.width = this.settings.videoWidth;
-
-                        linkElement.parentNode.replaceChild( videoElement, linkElement );
-                    }
-                    );
-
-                element.querySelectorAll( 'a[href$=".mp4"], a[href$=".webm"]' ).forEach(
-                    ( linkElement ) =>
-                    {
-                        let videoPath = linkElement.getAttribute( 'href' );
-
-                        if ( !videoPath.startsWith( 'http:' )
-                             && !videoPath.startsWith( 'https:' ) )
-                        {
-                            videoPath = this.app.vault.adapter.getResourcePath( activeFolderPath + videoPath );
-                        }
-
-                        let videoElement = document.createElement( 'video' );
-                        videoElement.src = videoPath;
-                        videoElement.autoplay = false;
-                        videoElement.loop = false;
-                        videoElement.controls = true;
-                        videoElement.title = linkElement.textContent;
-                        videoElement.style.marginTop = this.settings.videoTopMargin;
-                        videoElement.style.marginBottom = this.settings.videoBottomMargin;
-                        videoElement.style.maxHeight = this.settings.videoMaximumHeight;
-                        videoElement.style.height = this.settings.videoHeight;
-                        videoElement.style.width = this.settings.videoWidth;
-
-                        linkElement.parentNode.replaceChild( videoElement, linkElement );
                     }
                     );
             }
