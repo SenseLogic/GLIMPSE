@@ -28,12 +28,12 @@ Their default minimum and maximum sizes can be adjusted in the plugin settings.
 
 Their individual width or height can also be specified through the link title :
 
-*   `![title¨50%](path/to/image.ext)`
-*   `![title¨16rem](http://path/to/image.ext)`
-*   `![title¨:9rem](https://path/to/image.ext)`
-*   `![[path/to/video.ext|title¨50%]]`
-*   `![[http://path/to/video.ext|title¨:16rem]]`
-*   `![[https://path/to/video.ext|title¨:9rem]]`
+*   `![title¨50%](path/to/image.jpg)`
+*   `![title¨16rem](http://path/to/image.png)`
+*   `![title¨:9rem](https://path/to/image.webp)`
+*   `![[path/to/video.mp4|title¨50%]]`
+*   `![[http://path/to/video.mp4|title¨:16rem]]`
+*   `![[https://path/to/video.webm|title¨:9rem]]`
 
 ## Installation
 
