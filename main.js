@@ -34,11 +34,11 @@ class GlimpseSettingTab
                 text =>
                 text
                     .setPlaceholder( '100%' )
-                    .setValue( this.plugin.settings.imageMinimumWidth )
+                    .setValue( this.plugin.settings.imageWidth )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.imageMinimumWidth = value;
+                            this.plugin.settings.imageWidth = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -50,11 +50,11 @@ class GlimpseSettingTab
                 text =>
                 text
                     .setPlaceholder( 'auto' )
-                    .setValue( this.plugin.settings.imageMinimumHeight )
+                    .setValue( this.plugin.settings.imageHeight )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.imageMinimumHeight = value;
+                            this.plugin.settings.imageHeight = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -98,11 +98,11 @@ class GlimpseSettingTab
                 text =>
                 text
                     .setPlaceholder( '100%' )
-                    .setValue( this.plugin.settings.videoMinimumWidth )
+                    .setValue( this.plugin.settings.videoWidth )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoMinimumWidth = value;
+                            this.plugin.settings.videoWidth = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -114,11 +114,11 @@ class GlimpseSettingTab
                 text =>
                 text
                     .setPlaceholder( 'auto' )
-                    .setValue( this.plugin.settings.videoMinimumHeight )
+                    .setValue( this.plugin.settings.videoHeight )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoMinimumHeight = value;
+                            this.plugin.settings.videoHeight = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -171,12 +171,12 @@ module.exports = class Glimpse extends Plugin
             = Object.assign(
                   {},
                   {
-                      imageMinimumWidth: '100%',
-                      imageMinimumHeight: 'auto',
+                      imageWidth: '100%',
+                      imageHeight: 'auto',
                       imageMaximumWidth: '100%',
                       imageMaximumHeight: '80vh',
-                      videoMinimumWidth: '100%',
-                      videoMinimumHeight: 'auto',
+                      videoWidth: '100%',
+                      videoHeight: 'auto',
                       videoMaximumWidth: '100%',
                       videoMaximumHeight: '80vh'
                   },
@@ -196,11 +196,12 @@ module.exports = class Glimpse extends Plugin
 
     getMediumData(
         mediumTitle,
-        mediumWidth,
-        mediumHeight
+        defaultWidth,
+        defaultHeight
         )
     {
-        let linkDataArray = [ '', '100%', 'auto' ];
+        let mediumWidth = '';
+        let mediumHeight = '';
         let partArray = mediumTitle.split( '¨' );
         mediumTitle = partArray[ 0 ];
 
@@ -219,14 +220,25 @@ module.exports = class Glimpse extends Plugin
             }
         }
 
-        if ( mediumWidth === '' )
+        if ( mediumWidth === ''
+             && mediumHeight !== '' )
         {
             mediumWidth = 'auto';
+        }
+        else if ( mediumHeight === ''
+                  && mediumWidth !== '' )
+        {
+            mediumHeight = 'auto';
+        }
+
+        if ( mediumWidth === '' )
+        {
+            mediumWidth = defaultWidth;
         }
 
         if ( mediumHeight === '' )
         {
-            mediumHeight = 'auto';
+            mediumHeight = defaultHeight;
         }
 
         return { mediumTitle, mediumWidth, mediumHeight };
@@ -238,7 +250,7 @@ module.exports = class Glimpse extends Plugin
         imageTitle
         )
     {
-        return this.getMediumData( imageTitle, this.settings.imageMinimumWidth, this.settings.imageMinimumHeight );
+        return this.getMediumData( imageTitle, this.settings.imageWidth, this.settings.imageHeight );
     }
 
     // ~~
@@ -247,29 +259,7 @@ module.exports = class Glimpse extends Plugin
         videoTitle
         )
     {
-        return this.getMediumData( videoTitle, this.settings.videoMinimumWidth, this.settings.videoMinimumHeight );
-    }
-
-    // ~~
-
-    getMinimumSize(
-        size,
-        minimumSize
-        )
-    {
-        if ( size === 'auto'
-             || minimumSize === 'auto' )
-        {
-            return 'auto';
-        }
-        else if ( size === minimumSize )
-        {
-            return size;
-        }
-        else
-        {
-            return 'min(' + size + ', ' + minimumSize + ')';
-        }
+        return this.getMediumData( videoTitle, this.settings.videoWidth, this.settings.videoHeight );
     }
 
     // ~~
@@ -331,16 +321,14 @@ module.exports = class Glimpse extends Plugin
                             }
 
                             let { mediumTitle, mediumWidth, mediumHeight } = this.getImageData( linkElement.getAttribute( 'alt' ) );
-                            let mediumMinimumWidth = this.getMinimumSize( mediumWidth, this.settings.imageMinimumWidth );
-                            let mediumMinimumHeight = this.getMinimumSize( mediumHeight, this.settings.imageMinimumHeight );
                             let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.imageMaximumWidth );
                             let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.imageMaximumHeight );
 
                             let mediumElement = document.createElement( 'img' );
                             mediumElement.src = mediumPath;
                             mediumElement.alt = mediumTitle;
-                            mediumElement.style.width = mediumMinimumWidth;
-                            mediumElement.style.height = mediumMinimumHeight;
+                            mediumElement.style.width = mediumWidth;
+                            mediumElement.style.height = mediumHeight;
                             mediumElement.style.maxWidth = mediumMaximumWidth;
                             mediumElement.style.maxHeight = mediumMaximumHeight;
                             mediumElement.style.objectFit = 'contain';
@@ -358,8 +346,6 @@ module.exports = class Glimpse extends Plugin
                             }
 
                             let { mediumTitle, mediumWidth, mediumHeight } = this.getVideoData( linkElement.getAttribute( 'alt' ) );
-                            let mediumMinimumWidth = this.getMinimumSize( mediumWidth, this.settings.videoMinimumWidth );
-                            let mediumMinimumHeight = this.getMinimumSize( mediumHeight, this.settings.videoMinimumHeight );
                             let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.videoMaximumWidth );
                             let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.videoMaximumHeight );
 
@@ -369,8 +355,8 @@ module.exports = class Glimpse extends Plugin
                             mediumElement.loop = false;
                             mediumElement.controls = true;
                             mediumElement.title = mediumTitle;
-                            mediumElement.style.width = mediumMinimumWidth;
-                            mediumElement.style.height = mediumMinimumHeight;
+                            mediumElement.style.width = mediumWidth;
+                            mediumElement.style.height = mediumHeight;
                             mediumElement.style.maxWidth = mediumMaximumWidth;
                             mediumElement.style.maxHeight = mediumMaximumHeight;
                             mediumElement.style.objectFit = 'contain';
@@ -395,8 +381,6 @@ module.exports = class Glimpse extends Plugin
                             }
 
                             let { mediumTitle, mediumWidth, mediumHeight } = this.getVideoData( linkElement.textContent );
-                            let mediumMinimumWidth = this.getMinimumSize( mediumWidth, this.settings.videoMinimumWidth );
-                            let mediumMinimumHeight = this.getMinimumSize( mediumHeight, this.settings.videoMinimumHeight );
                             let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.videoMaximumWidth );
                             let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.videoMaximumHeight );
 
@@ -406,8 +390,8 @@ module.exports = class Glimpse extends Plugin
                             mediumElement.loop = false;
                             mediumElement.controls = true;
                             mediumElement.title = mediumTitle;
-                            mediumElement.style.width = mediumMinimumWidth;
-                            mediumElement.style.height = mediumMinimumHeight;
+                            mediumElement.style.width = mediumWidth;
+                            mediumElement.style.height = mediumHeight;
                             mediumElement.style.maxWidth = mediumMaximumWidth;
                             mediumElement.style.maxHeight = mediumMaximumHeight;
                             mediumElement.style.objectFit = 'contain';
