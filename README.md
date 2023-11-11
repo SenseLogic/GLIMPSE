@@ -35,6 +35,10 @@ Their individual width or height can also be specified through the link title :
 *   `![[http://path/to/video.mp4|title¨:16rem]]`
 *   `![[https://path/to/video.webm|title¨:9rem]]`
 
+## Limitations
+
+*   The minimum width is still enforced when the maximum height is applied.
+
 ## Installation
 
 *   In your vault folder, create a `.obsidian/plugins/glimpse` subfolder.
