@@ -6,7 +6,7 @@ Customizable image and video rendering for Obsidian.
 
 ## Description
 
-This plugin renders GIF/JPG/PNG/WEBP images and MP4/WEBM videos in the following formats :
+This plugin renders GIF/JPG/PNG/WEBP images and MP4/WEBM videos using the following formats :
 
 *   `[title](path/to/video.ext)`
 *   `[title](http://path/to/video.ext)`
@@ -26,7 +26,7 @@ This plugin renders GIF/JPG/PNG/WEBP images and MP4/WEBM videos in the following
 
 Their default minimum and maximum sizes are defined in the settings.
 
-Their individual width or height can also be defined through the link title :
+Their individual width or height can also be specified through the link title :
 
 *   `![title¨50%](path/to/image.ext)`
 *   `![title¨16rem](http://path/to/image.ext)`
