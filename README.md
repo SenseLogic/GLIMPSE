@@ -6,9 +6,8 @@ Customizable image and video rendering for Obsidian.
 
 ## Description
 
-This plugin renders image and video links with a customizable maximum height.
+This plugin renders GIF/JPG/PNG/WEBP images and MP4/WEBM videos in the following formats :
 
-The following link formats are supported :
 *   `[title](path/to/video.ext)`
 *   `[title](http://path/to/video.ext)`
 *   `[title](https://path/to/video.ext)`
@@ -25,15 +24,9 @@ The following link formats are supported :
 *   `![[http://path/to/video.ext|title]]`
 *   `![[https://path/to/video.ext|title]]`
 
-The following file extensions are supported :
-*   .gif
-*   .jpg
-*   .png
-*   .webp
-*   .mp4
-*   .webm
+Their default minimum and maximum sizes can be defined in the settings.
 
-The width or height can be appended to the link title :
+Their individual width or height can also be defined through the link title :
 
 *   `![title¨50%](path/to/image.ext)`
 *   `![title¨16rem](http://path/to/image.ext)`
