@@ -34,11 +34,11 @@ class GlimpseSettingTab
                 text =>
                 text
                     .setPlaceholder( '100%' )
-                    .setValue( this.plugin.settings.imageWidth )
+                    .setValue( this.plugin.settings.imageMinimumWidth )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.imageWidth = value;
+                            this.plugin.settings.imageMinimumWidth = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -50,11 +50,11 @@ class GlimpseSettingTab
                 text =>
                 text
                     .setPlaceholder( 'auto' )
-                    .setValue( this.plugin.settings.imageHeight )
+                    .setValue( this.plugin.settings.imageMinimumHeight )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.imageHeight = value;
+                            this.plugin.settings.imageMinimumHeight = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -98,11 +98,11 @@ class GlimpseSettingTab
                 text =>
                 text
                     .setPlaceholder( '100%' )
-                    .setValue( this.plugin.settings.videoWidth )
+                    .setValue( this.plugin.settings.videoMinimumWidth )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoWidth = value;
+                            this.plugin.settings.videoMinimumWidth = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -114,11 +114,11 @@ class GlimpseSettingTab
                 text =>
                 text
                     .setPlaceholder( 'auto' )
-                    .setValue( this.plugin.settings.videoHeight )
+                    .setValue( this.plugin.settings.videoMinimumHeight )
                     .onChange(
                         async ( value ) =>
                         {
-                            this.plugin.settings.videoHeight = value;
+                            this.plugin.settings.videoMinimumHeight = value;
                             await this.plugin.saveSettings();
                         }
                         )
@@ -171,12 +171,12 @@ module.exports = class Glimpse extends Plugin
             = Object.assign(
                   {},
                   {
-                      imageWidth: '100%',
-                      imageHeight: 'auto',
+                      imageMinimumWidth: '100%',
+                      imageMinimumHeight: 'auto',
                       imageMaximumWidth: '100%',
                       imageMaximumHeight: '80vh',
-                      videoWidth: '100%',
-                      videoHeight: 'auto',
+                      videoMinimumWidth: '100%',
+                      videoMinimumHeight: 'auto',
                       videoMaximumWidth: '100%',
                       videoMaximumHeight: '80vh'
                   },
@@ -194,13 +194,15 @@ module.exports = class Glimpse extends Plugin
 
     // ~~
 
-    getLinkDataArray(
-        linkText
+    getMediumData(
+        mediumTitle,
+        mediumWidth,
+        mediumHeight
         )
     {
         let linkDataArray = [ '', '100%', 'auto' ];
-        let partArray = linkText.split( '¨' );
-        linkDataArray[ 0 ] = partArray[ 0 ];
+        let partArray = mediumTitle.split( '¨' );
+        mediumTitle = partArray[ 0 ];
 
         if ( partArray.length > 1 )
         {
@@ -208,21 +210,87 @@ module.exports = class Glimpse extends Plugin
 
             if ( partArray.length >= 1 )
             {
-                linkDataArray[ 1 ] = partArray[ 0 ];
+                mediumWidth = partArray[ 0 ];
             }
 
             if ( partArray.length >= 2 )
             {
-                linkDataArray[ 2 ] = partArray[ 1 ];
+                mediumHeight = partArray[ 1 ];
             }
         }
 
-        if ( linkDataArray[ 1 ] === '' )
+        if ( mediumWidth === '' )
         {
-            linkDataArray[ 1 ] = 'auto';
+            mediumWidth = 'auto';
         }
 
-        return linkDataArray;
+        if ( mediumHeight === '' )
+        {
+            mediumHeight = 'auto';
+        }
+
+        return { mediumTitle, mediumWidth, mediumHeight };
+    }
+
+    // ~~
+
+    getImageData(
+        imageTitle
+        )
+    {
+        return this.getMediumData( imageTitle, this.settings.imageMinimumWidth, this.settings.imageMinimumHeight );
+    }
+
+    // ~~
+
+    getVideoData(
+        videoTitle
+        )
+    {
+        return this.getMediumData( videoTitle, this.settings.videoMinimumWidth, this.settings.videoMinimumHeight );
+    }
+
+    // ~~
+
+    getMinimumSize(
+        size,
+        minimumSize
+        )
+    {
+        if ( size === 'auto'
+             || minimumSize === 'auto' )
+        {
+            return 'auto';
+        }
+        else if ( size === minimumSize )
+        {
+            return size;
+        }
+        else
+        {
+            return 'min(' + size + ', ' + minimumSize + ')';
+        }
+    }
+
+    // ~~
+
+    getMaximumSize(
+        size,
+        maximumSize
+        )
+    {
+        if ( size === 'auto' )
+        {
+            return maximumSize;
+        }
+        else if ( size === maximumSize )
+        {
+            return size;
+        }
+        else
+        {
+            return 'min(' + size + ', ' + maximumSize + ')';
+        }
     }
 
     // ~~
@@ -234,10 +302,6 @@ module.exports = class Glimpse extends Plugin
 
         await this.loadSettings();
 
-        let imageMaximumWidth = 'min(' + this.settings.imageWidth + ', ' + this.settings.imageMaximumWidth + ')';
-        let imageMaximumHeight = this.settings.imageMaximumHeight;
-        let videoMaximumWidth = 'min(' + this.settings.videoWidth + ', ' + this.settings.videoMaximumWidth + ')';
-        let videoMaximumHeight = this.settings.videoMaximumHeight;
 
         this.registerMarkdownPostProcessor(
             ( element ) =>
@@ -253,57 +317,65 @@ module.exports = class Glimpse extends Plugin
                 element.querySelectorAll( 'div.internal-embed, span.internal-embed' ).forEach(
                     ( linkElement ) =>
                     {
-                        let linkPath = linkElement.getAttribute( 'src' );
+                        let mediumPath = linkElement.getAttribute( 'src' );
 
-                        if ( linkPath.endsWith( '.gif' )
-                             || linkPath.endsWith( '.jpg' )
-                             || linkPath.endsWith( '.png' )
-                             || linkPath.endsWith( '.webp' ) )
+                        if ( mediumPath.endsWith( '.gif' )
+                             || mediumPath.endsWith( '.jpg' )
+                             || mediumPath.endsWith( '.png' )
+                             || mediumPath.endsWith( '.webp' ) )
                         {
-                            if ( !linkPath.startsWith( 'http:' )
-                                 && !linkPath.startsWith( 'https:' ) )
+                            if ( !mediumPath.startsWith( 'http:' )
+                                 && !mediumPath.startsWith( 'https:' ) )
                             {
-                                linkPath = this.app.vault.adapter.getResourcePath( activeFolderPath + linkPath );
+                                mediumPath = this.app.vault.adapter.getResourcePath( activeFolderPath + mediumPath );
                             }
 
-                            let [ imageTitle, imageWidth, imageHeight ] = this.getLinkDataArray( linkElement.getAttribute( 'alt' ) );
+                            let { mediumTitle, mediumWidth, mediumHeight } = this.getImageData( linkElement.getAttribute( 'alt' ) );
+                            let mediumMinimumWidth = this.getMinimumSize( mediumWidth, this.settings.imageMinimumWidth );
+                            let mediumMinimumHeight = this.getMinimumSize( mediumHeight, this.settings.imageMinimumHeight );
+                            let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.imageMaximumWidth );
+                            let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.imageMaximumHeight );
 
-                            let imageElement = document.createElement( 'img' );
-                            imageElement.src = linkPath;
-                            imageElement.alt = imageTitle;
-                            imageElement.style.width = imageWidth;
-                            imageElement.style.height = imageHeight;
-                            imageElement.style.maxWidth = imageMaximumWidth;
-                            imageElement.style.maxHeight = imageMaximumHeight;
-                            imageElement.style.objectFit = 'contain';
+                            let mediumElement = document.createElement( 'img' );
+                            mediumElement.src = mediumPath;
+                            mediumElement.alt = mediumTitle;
+                            mediumElement.style.width = mediumMinimumWidth;
+                            mediumElement.style.height = mediumMinimumHeight;
+                            mediumElement.style.maxWidth = mediumMaximumWidth;
+                            mediumElement.style.maxHeight = mediumMaximumHeight;
+                            mediumElement.style.objectFit = 'contain';
 
-                            linkElement.parentNode.replaceChild( imageElement, linkElement );
+                            linkElement.parentNode.replaceChild( mediumElement, linkElement );
                         }
 
-                        if ( linkPath.endsWith( '.mp4' )
-                             || linkPath.endsWith( '.webm' ) )
+                        if ( mediumPath.endsWith( '.mp4' )
+                             || mediumPath.endsWith( '.webm' ) )
                         {
-                            if ( !linkPath.startsWith( 'http:' )
-                                 && !linkPath.startsWith( 'https:' ) )
+                            if ( !mediumPath.startsWith( 'http:' )
+                                 && !mediumPath.startsWith( 'https:' ) )
                             {
-                                linkPath = this.app.vault.adapter.getResourcePath( activeFolderPath + linkPath );
+                                mediumPath = this.app.vault.adapter.getResourcePath( activeFolderPath + mediumPath );
                             }
 
-                            let [ videoTitle, videoWidth, videoHeight ] = this.getLinkDataArray( linkElement.getAttribute( 'alt' ) );
+                            let { mediumTitle, mediumWidth, mediumHeight } = this.getVideoData( linkElement.getAttribute( 'alt' ) );
+                            let mediumMinimumWidth = this.getMinimumSize( mediumWidth, this.settings.videoMinimumWidth );
+                            let mediumMinimumHeight = this.getMinimumSize( mediumHeight, this.settings.videoMinimumHeight );
+                            let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.videoMaximumWidth );
+                            let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.videoMaximumHeight );
 
-                            let videoElement = document.createElement( 'video' );
-                            videoElement.src = linkPath;
-                            videoElement.autoplay = false;
-                            videoElement.loop = false;
-                            videoElement.controls = true;
-                            videoElement.title = videoTitle;
-                            videoElement.style.width = videoWidth;
-                            videoElement.style.height = videoHeight;
-                            videoElement.style.maxWidth = videoMaximumWidth;
-                            videoElement.style.maxHeight = videoMaximumHeight;
-                            videoElement.style.objectFit = 'contain';
+                            let mediumElement = document.createElement( 'video' );
+                            mediumElement.src = mediumPath;
+                            mediumElement.autoplay = false;
+                            mediumElement.loop = false;
+                            mediumElement.controls = true;
+                            mediumElement.title = mediumTitle;
+                            mediumElement.style.width = mediumMinimumWidth;
+                            mediumElement.style.height = mediumMinimumHeight;
+                            mediumElement.style.maxWidth = mediumMaximumWidth;
+                            mediumElement.style.maxHeight = mediumMaximumHeight;
+                            mediumElement.style.objectFit = 'contain';
 
-                            linkElement.parentNode.replaceChild( videoElement, linkElement );
+                            linkElement.parentNode.replaceChild( mediumElement, linkElement );
                         }
                     }
                     );
@@ -311,32 +383,36 @@ module.exports = class Glimpse extends Plugin
                 element.querySelectorAll( 'a' ).forEach(
                     ( linkElement ) =>
                     {
-                        let linkPath = linkElement.getAttribute( 'href' );
+                        let mediumPath = linkElement.getAttribute( 'href' );
 
-                        if ( linkPath.endsWith( '.mp4' )
-                             || linkPath.endsWith( '.webm' ) )
+                        if ( mediumPath.endsWith( '.mp4' )
+                             || mediumPath.endsWith( '.webm' ) )
                         {
-                            if ( !linkPath.startsWith( 'http:' )
-                                 && !linkPath.startsWith( 'https:' ) )
+                            if ( !mediumPath.startsWith( 'http:' )
+                                 && !mediumPath.startsWith( 'https:' ) )
                             {
-                                linkPath = this.app.vault.adapter.getResourcePath( activeFolderPath + linkPath );
+                                mediumPath = this.app.vault.adapter.getResourcePath( activeFolderPath + mediumPath );
                             }
 
-                            let [ videoTitle, videoWidth, videoHeight ] = this.getLinkDataArray( linkElement.textContent );
+                            let { mediumTitle, mediumWidth, mediumHeight } = this.getVideoData( linkElement.textContent );
+                            let mediumMinimumWidth = this.getMinimumSize( mediumWidth, this.settings.videoMinimumWidth );
+                            let mediumMinimumHeight = this.getMinimumSize( mediumHeight, this.settings.videoMinimumHeight );
+                            let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.videoMaximumWidth );
+                            let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.videoMaximumHeight );
 
-                            let videoElement = document.createElement( 'video' );
-                            videoElement.src = linkPath;
-                            videoElement.autoplay = false;
-                            videoElement.loop = false;
-                            videoElement.controls = true;
-                            videoElement.title = videoTitle;
-                            videoElement.style.width = videoWidth;
-                            videoElement.style.height = videoHeight;
-                            videoElement.style.maxWidth = videoMaximumWidth;
-                            videoElement.style.maxHeight = videoMaximumHeight;
-                            videoElement.style.objectFit = 'contain';
+                            let mediumElement = document.createElement( 'video' );
+                            mediumElement.src = mediumPath;
+                            mediumElement.autoplay = false;
+                            mediumElement.loop = false;
+                            mediumElement.controls = true;
+                            mediumElement.title = mediumTitle;
+                            mediumElement.style.width = mediumMinimumWidth;
+                            mediumElement.style.height = mediumMinimumHeight;
+                            mediumElement.style.maxWidth = mediumMaximumWidth;
+                            mediumElement.style.maxHeight = mediumMaximumHeight;
+                            mediumElement.style.objectFit = 'contain';
 
-                            linkElement.parentNode.replaceChild( videoElement, linkElement );
+                            linkElement.parentNode.replaceChild( mediumElement, linkElement );
                         }
                     }
                     );

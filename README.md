@@ -33,14 +33,14 @@ The following file extensions are supported :
 *   .mp4
 *   .webm
 
-The title can be used to specify the medium width and/or height :
+The width or height can be appended to the link title :
 
 *   `![title¨50%](path/to/image.ext)`
-*   `![title¨:10rem](http://path/to/image.ext)`
-*   `![title¨auto:10rem](https://path/to/image.ext)`
+*   `![title¨16rem](http://path/to/image.ext)`
+*   `![title¨:9rem](https://path/to/image.ext)`
 *   `![[path/to/video.ext|title¨50%]]`
-*   `![[http://path/to/video.ext|title¨:10rem]]`
-*   `![[https://path/to/video.ext|title¨auto:10rem]]`
+*   `![[http://path/to/video.ext|title¨:16rem]]`
+*   `![[https://path/to/video.ext|title¨:9rem]]`
 
 ## Installation
 
