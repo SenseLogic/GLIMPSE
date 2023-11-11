@@ -24,7 +24,7 @@ This plugin renders GIF/JPG/PNG/WEBP images and MP4/WEBM videos in the following
 *   `![[http://path/to/video.ext|title]]`
 *   `![[https://path/to/video.ext|title]]`
 
-Their default minimum and maximum sizes can be defined in the settings.
+Their default minimum and maximum sizes are defined in the settings.
 
 Their individual width or height can also be defined through the link title :
 
