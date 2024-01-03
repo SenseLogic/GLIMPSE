@@ -288,124 +288,130 @@ module.exports = class Glimpse extends Plugin
     async onload(
         )
     {
-        console.log( 'Glimpse plugin loaded' );
+        console.log( 'Glimpse plugin loading' );
 
         await this.loadSettings();
-
 
         this.registerMarkdownPostProcessor(
             ( element ) =>
             {
-                let activeFilePath = this.app.workspace.getActiveFile().path;
-                let activeFolderPath = '';
+                let activeFile = this.app.workspace.getActiveFile();
 
-                if ( activeFilePath.indexOf( '/' ) >= 0 )
+                if ( activeFile )
                 {
-                    activeFolderPath = activeFilePath.slice( 0, activeFilePath.lastIndexOf( '/' ) + 1 );
+                    let activeFilePath = activeFile.path;
+                    let activeFolderPath = '';
+
+                    if ( activeFilePath.indexOf( '/' ) >= 0 )
+                    {
+                        activeFolderPath = activeFilePath.slice( 0, activeFilePath.lastIndexOf( '/' ) + 1 );
+                    }
+
+                    element.querySelectorAll( 'div.internal-embed, span.internal-embed' ).forEach(
+                        ( linkElement ) =>
+                        {
+                            let mediumPath = linkElement.getAttribute( 'src' );
+
+                            if ( mediumPath.endsWith( '.gif' )
+                                 || mediumPath.endsWith( '.jpg' )
+                                 || mediumPath.endsWith( '.png' )
+                                 || mediumPath.endsWith( '.webp' ) )
+                            {
+                                if ( !mediumPath.startsWith( 'http:' )
+                                     && !mediumPath.startsWith( 'https:' ) )
+                                {
+                                    mediumPath = this.app.vault.adapter.getResourcePath( activeFolderPath + mediumPath );
+                                }
+
+                                let { mediumTitle, mediumWidth, mediumHeight } = this.getImageData( linkElement.getAttribute( 'alt' ) );
+                                let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.imageMaximumWidth );
+                                let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.imageMaximumHeight );
+
+                                let mediumElement = document.createElement( 'img' );
+                                mediumElement.src = mediumPath;
+                                mediumElement.alt = mediumTitle;
+                                mediumElement.style.width = mediumWidth;
+                                mediumElement.style.height = mediumHeight;
+                                mediumElement.style.maxWidth = mediumMaximumWidth;
+                                mediumElement.style.maxHeight = mediumMaximumHeight;
+                                mediumElement.style.objectFit = 'contain';
+
+                                linkElement.parentNode.replaceChild( mediumElement, linkElement );
+                            }
+
+                            if ( mediumPath.endsWith( '.mp4' )
+                                 || mediumPath.endsWith( '.webm' ) )
+                            {
+                                if ( !mediumPath.startsWith( 'http:' )
+                                     && !mediumPath.startsWith( 'https:' ) )
+                                {
+                                    mediumPath = this.app.vault.adapter.getResourcePath( activeFolderPath + mediumPath );
+                                }
+
+                                let { mediumTitle, mediumWidth, mediumHeight } = this.getVideoData( linkElement.getAttribute( 'alt' ) );
+                                let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.videoMaximumWidth );
+                                let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.videoMaximumHeight );
+
+                                let mediumElement = document.createElement( 'video' );
+                                mediumElement.src = mediumPath;
+                                mediumElement.autoplay = false;
+                                mediumElement.loop = false;
+                                mediumElement.controls = true;
+                                mediumElement.title = mediumTitle;
+                                mediumElement.style.width = mediumWidth;
+                                mediumElement.style.height = mediumHeight;
+                                mediumElement.style.maxWidth = mediumMaximumWidth;
+                                mediumElement.style.maxHeight = mediumMaximumHeight;
+                                mediumElement.style.objectFit = 'contain';
+
+                                linkElement.parentNode.replaceChild( mediumElement, linkElement );
+                            }
+                        }
+                        );
+
+                    element.querySelectorAll( 'a' ).forEach(
+                        ( linkElement ) =>
+                        {
+                            let mediumPath = linkElement.getAttribute( 'href' );
+
+                            if ( mediumPath.endsWith( '.mp4' )
+                                 || mediumPath.endsWith( '.webm' ) )
+                            {
+                                if ( !mediumPath.startsWith( 'http:' )
+                                     && !mediumPath.startsWith( 'https:' ) )
+                                {
+                                    mediumPath = this.app.vault.adapter.getResourcePath( activeFolderPath + mediumPath );
+                                }
+
+                                let { mediumTitle, mediumWidth, mediumHeight } = this.getVideoData( linkElement.textContent );
+                                let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.videoMaximumWidth );
+                                let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.videoMaximumHeight );
+
+                                let mediumElement = document.createElement( 'video' );
+                                mediumElement.src = mediumPath;
+                                mediumElement.autoplay = false;
+                                mediumElement.loop = false;
+                                mediumElement.controls = true;
+                                mediumElement.title = mediumTitle;
+                                mediumElement.style.width = mediumWidth;
+                                mediumElement.style.height = mediumHeight;
+                                mediumElement.style.maxWidth = mediumMaximumWidth;
+                                mediumElement.style.maxHeight = mediumMaximumHeight;
+                                mediumElement.style.objectFit = 'contain';
+
+                                linkElement.parentNode.replaceChild( mediumElement, linkElement );
+                            }
+                        }
+                        );
                 }
-
-                element.querySelectorAll( 'div.internal-embed, span.internal-embed' ).forEach(
-                    ( linkElement ) =>
-                    {
-                        let mediumPath = linkElement.getAttribute( 'src' );
-
-                        if ( mediumPath.endsWith( '.gif' )
-                             || mediumPath.endsWith( '.jpg' )
-                             || mediumPath.endsWith( '.png' )
-                             || mediumPath.endsWith( '.webp' ) )
-                        {
-                            if ( !mediumPath.startsWith( 'http:' )
-                                 && !mediumPath.startsWith( 'https:' ) )
-                            {
-                                mediumPath = this.app.vault.adapter.getResourcePath( activeFolderPath + mediumPath );
-                            }
-
-                            let { mediumTitle, mediumWidth, mediumHeight } = this.getImageData( linkElement.getAttribute( 'alt' ) );
-                            let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.imageMaximumWidth );
-                            let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.imageMaximumHeight );
-
-                            let mediumElement = document.createElement( 'img' );
-                            mediumElement.src = mediumPath;
-                            mediumElement.alt = mediumTitle;
-                            mediumElement.style.width = mediumWidth;
-                            mediumElement.style.height = mediumHeight;
-                            mediumElement.style.maxWidth = mediumMaximumWidth;
-                            mediumElement.style.maxHeight = mediumMaximumHeight;
-                            mediumElement.style.objectFit = 'contain';
-
-                            linkElement.parentNode.replaceChild( mediumElement, linkElement );
-                        }
-
-                        if ( mediumPath.endsWith( '.mp4' )
-                             || mediumPath.endsWith( '.webm' ) )
-                        {
-                            if ( !mediumPath.startsWith( 'http:' )
-                                 && !mediumPath.startsWith( 'https:' ) )
-                            {
-                                mediumPath = this.app.vault.adapter.getResourcePath( activeFolderPath + mediumPath );
-                            }
-
-                            let { mediumTitle, mediumWidth, mediumHeight } = this.getVideoData( linkElement.getAttribute( 'alt' ) );
-                            let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.videoMaximumWidth );
-                            let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.videoMaximumHeight );
-
-                            let mediumElement = document.createElement( 'video' );
-                            mediumElement.src = mediumPath;
-                            mediumElement.autoplay = false;
-                            mediumElement.loop = false;
-                            mediumElement.controls = true;
-                            mediumElement.title = mediumTitle;
-                            mediumElement.style.width = mediumWidth;
-                            mediumElement.style.height = mediumHeight;
-                            mediumElement.style.maxWidth = mediumMaximumWidth;
-                            mediumElement.style.maxHeight = mediumMaximumHeight;
-                            mediumElement.style.objectFit = 'contain';
-
-                            linkElement.parentNode.replaceChild( mediumElement, linkElement );
-                        }
-                    }
-                    );
-
-                element.querySelectorAll( 'a' ).forEach(
-                    ( linkElement ) =>
-                    {
-                        let mediumPath = linkElement.getAttribute( 'href' );
-
-                        if ( mediumPath.endsWith( '.mp4' )
-                             || mediumPath.endsWith( '.webm' ) )
-                        {
-                            if ( !mediumPath.startsWith( 'http:' )
-                                 && !mediumPath.startsWith( 'https:' ) )
-                            {
-                                mediumPath = this.app.vault.adapter.getResourcePath( activeFolderPath + mediumPath );
-                            }
-
-                            let { mediumTitle, mediumWidth, mediumHeight } = this.getVideoData( linkElement.textContent );
-                            let mediumMaximumWidth = this.getMaximumSize( mediumWidth, this.settings.videoMaximumWidth );
-                            let mediumMaximumHeight = this.getMaximumSize( mediumHeight, this.settings.videoMaximumHeight );
-
-                            let mediumElement = document.createElement( 'video' );
-                            mediumElement.src = mediumPath;
-                            mediumElement.autoplay = false;
-                            mediumElement.loop = false;
-                            mediumElement.controls = true;
-                            mediumElement.title = mediumTitle;
-                            mediumElement.style.width = mediumWidth;
-                            mediumElement.style.height = mediumHeight;
-                            mediumElement.style.maxWidth = mediumMaximumWidth;
-                            mediumElement.style.maxHeight = mediumMaximumHeight;
-                            mediumElement.style.objectFit = 'contain';
-
-                            linkElement.parentNode.replaceChild( mediumElement, linkElement );
-                        }
-                    }
-                    );
             }
             );
 
         this.addSettingTab(
             new GlimpseSettingTab( this.app, this )
             );
+
+        console.log( 'Glimpse plugin loaded' );
     }
 
     // ~~
